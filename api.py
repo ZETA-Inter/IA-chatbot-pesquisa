@@ -30,6 +30,6 @@ def search_agent():
 
 if __name__ == '__main__':
     # Get the port from the environment variable, default to 5000 if not set
-    port = os.environ.get("PORT", 5000)
+    port = int(os.environ.get("PORT", 5000))
     # Run the app, binding to all public interfaces and using the specified port
-    app.run(host="0.0.0.0", port=port, debug=True)
+    app.run(host="0.0.0.0", port=port)
