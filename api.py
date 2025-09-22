@@ -28,4 +28,7 @@ def search_agent():
     return {"agent": "search_agent", "response": response}
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    # Get the port from the environment variable, default to 5000 if not set
+    port = os.environ.get("PORT", 5000)
+    # Run the app, binding to all public interfaces and using the specified port
+    app.run(host="0.0.0.0", port=port, debug=True)
