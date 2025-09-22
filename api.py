@@ -1,15 +1,15 @@
 from flask import Flask, request, jsonify
-from programs_agent import programs_agent
-from search_agent import search_agent
+from programs_agent import programs_agent as run_programs_agent
+from search_agent import search_agent as run_search_agent
 
 app = Flask(__name__)
 
 # Example agent functions (replace with your actual logic)
 def programs_agent_response(prompt: str) -> str:
-    return programs_agent(prompt)
+    return run_programs_agent(prompt)
 
 def search_agent_response(prompt: str) -> str:
-    return search_agent(prompt)
+    return run_search_agent(prompt)
 
 # Endpoint for Agent 1
 @app.route('/programs_agent', methods=['POST'])
