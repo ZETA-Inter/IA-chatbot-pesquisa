@@ -139,19 +139,19 @@ chain = RunnableWithMessageHistory(
     history_messages_key="chat_history"
 )
 
-while True:
-    user_input = input("> ")
-    if user_input.lower() in ("sair", "end", "fim", "tchau", "bye"):
-        print("Tchau, qualquer dúvida, pode me chamar que eu estarei por aqui!")
-        break
-    try:
-        resposta = chain.invoke(
-            {"input": user_input},
-            config={"configurable": {"session_id": "PRECISA_MAS_NAO_IMPORTA"}} #aqui, entraia o id do usuario
-        )
-        print(resposta['output'])
-    except Exception as e:
-        print("erro ao consumir API: ", e)
+def search_agent(user_input):
+    while True:
+        if user_input.lower() in ("sair", "end", "fim", "tchau", "bye"):
+            print("Tchau, qualquer dúvida, pode me chamar que eu estarei por aqui!")
+            break
+        try:
+            resposta = chain.invoke(
+                {"input": user_input},
+                config={"configurable": {"session_id": "PRECISA_MAS_NAO_IMPORTA"}} #aqui, entraia o id do usuario
+            )
+            return resposta
+        except Exception as e:
+            print("erro ao consumir API: ", e)
 
 
 
