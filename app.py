@@ -22,7 +22,7 @@ def programs_agent():
     data = request.get_json()
     prompt = data.get("prompt", "")
     response = programs_agent_response(prompt)
-    return {"agent": "programs_agent", "response": response}
+    return jsonify({"agent": "programs_agent", "response": response})
 
 # Endpoint for Agent 2
 @app.route('/search_agent', methods=['POST'])
@@ -30,7 +30,7 @@ def search_agent():
     data = request.get_json()
     prompt = data.get("prompt", "")
     response = search_agent_response(prompt)
-    return {"agent": "search_agent", "response": response}
+    return jsonify({"agent": "search_agent", "response": response})
 
 if __name__ == '__main__':
     # Get the port from the environment variable, default to 5000 if not set
