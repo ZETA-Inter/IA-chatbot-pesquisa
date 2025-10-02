@@ -2,6 +2,10 @@ from flask import Flask, request, jsonify
 from programs_agent import programs_agent as run_programs_agent
 from search_agent import search_agent as run_search_agent
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
 
 app = Flask(__name__)
 
