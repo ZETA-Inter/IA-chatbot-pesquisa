@@ -22,7 +22,7 @@ def programs_agent():
     data = request.get_json()
     prompt = data.get("prompt", "")
     response = programs_agent_response(prompt)
-    return jsonify({"agent": "programs_agent", "response": response})
+    return jsonify({"agent": "programs_agent", "response": str(response)})
 
 # Endpoint for Agent 2
 @app.route('/search_agent', methods=['POST'])
