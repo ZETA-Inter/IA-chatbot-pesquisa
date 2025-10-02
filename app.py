@@ -22,8 +22,8 @@ def programs_agent():
     data = request.get_json()
     prompt = data.get("prompt", "")
     response = programs_agent_response(prompt)
-    if hasattr(response, "content"):
-        response = response.content 
+    if hasattr(response, "output"):
+        response = response.output 
     return jsonify({"agent": "programs_agent", "response": response})
 
 # Endpoint for Agent 2
