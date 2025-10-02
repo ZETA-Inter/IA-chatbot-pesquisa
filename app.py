@@ -30,7 +30,7 @@ def search_agent():
     data = request.get_json()
     prompt = data.get("prompt", "")
     response = search_agent_response(prompt)
-    return jsonify({"agent": "search_agent", "response": response})
+    return jsonify({"agent": "search_agent", "response": str(response)})
 
 if __name__ == '__main__':
     # Get the port from the environment variable, default to 5000 if not set

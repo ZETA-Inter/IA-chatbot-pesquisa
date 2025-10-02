@@ -149,7 +149,7 @@ def search_agent(user_input):
                 {"input": user_input},
                 config={"configurable": {"session_id": "PRECISA_MAS_NAO_IMPORTA"}} #aqui, entraia o id do usuario
             )
-            return resposta
+            return resposta['output']
         except Exception as e:
             print("erro ao consumir API: ", e)
 
