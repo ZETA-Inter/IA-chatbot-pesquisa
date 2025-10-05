@@ -1,0 +1,6 @@
+Atlas search:
+nome do índice: idx_vector_embedding
+
+
+
+idx_classes_search

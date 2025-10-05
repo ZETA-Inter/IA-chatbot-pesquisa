@@ -1,0 +1,103 @@
+[
+    {
+      "human": {
+        "chatbot": "programs_agent.py",
+        "question": "Quais cuidados devo ter no transporte de suínos?",
+        "answer": "É importante manter a temperatura controlada, ventilação adequada e respeitar o limite de animais por veículo."
+      },
+      "ai": {
+        "evaluation": "Boa"
+      }
+    },
+    {
+      "human": {
+        "chatbot": "programs_agent.py",
+        "question": "Como devo abater aves?",
+        "answer": "Basta cortar o pescoço rapidamente sem considerar normas de bem-estar."
+      },
+      "ai": {
+        "evaluation": "Ruim"
+      }
+    },
+    {
+      "human": {
+        "chatbot": "programs_agent.py",
+        "question": "Quais medidas de higiene devo ter no manejo de bovinos?",
+        "answer": "Limpeza diária dos currais e esterilização de ferramentas são essenciais."
+      },
+      "ai": {
+        "evaluation": "Boa"
+      }
+    },
+    {
+      "human": {
+        "chatbot": "programs_agent.py",
+        "question": "Como devo armazenar rações para galinhas?",
+        "answer": "Coloque em qualquer lugar, desde que tenha espaço."
+      },
+      "ai": {
+        "evaluation": "Ruim"
+      }
+    },
+    {
+      "human": {
+        "chatbot": "programs_agent.py",
+        "question": "Quais cuidados tomar no transporte de bovinos?",
+        "answer": "Manter água e sombra adequadas, e respeitar tempo máximo de transporte."
+      },
+      "ai": {
+        "evaluation": "Boa"
+      }
+    },
+    {
+      "human": {
+        "chatbot": "search_agent.py",
+        "question": "Quais cursos existem sobre manejo de bovinos?",
+        "answer": "Temos cursos sobre alimentação, manejo sanitário e transporte de bovinos."
+      },
+      "ai": {
+        "evaluation": "Boa"
+      }
+    },
+    {
+      "human": {
+        "chatbot": "search_agent.py",
+        "question": "Quais cursos existem sobre peixes?",
+        "answer": "Não sei responder, mas você pode procurar no site."
+      },
+      "ai": {
+        "evaluation": "Aceitável"
+      }
+    },
+    {
+      "human": {
+        "chatbot": "search_agent.py",
+        "question": "Cursos sobre transporte de suínos?",
+        "answer": "Oferecemos cursos de transporte e bem-estar animal, com técnicas detalhadas."
+      },
+      "ai": {
+        "evaluation": "Boa"
+      }
+    },
+    {
+      "human": {
+        "chatbot": "search_agent.py",
+        "question": "Quais cursos existem sobre aves?",
+        "answer": "Temos alguns cursos, mas não detalho os conteúdos."
+      },
+      "ai": {
+        "evaluation": "Aceitável"
+      }
+    },
+    {
+      "human": {
+        "chatbot": "search_agent.py",
+        "question": "Cursos sobre abate humanitário?",
+        "answer": "Não temos cursos relacionados a esse tema."
+      },
+      "ai": {
+        "evaluation": "Ruim"
+      }
+    }
+  ]
+  

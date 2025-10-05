@@ -1,0 +1,115 @@
+from zoneinfo import ZoneInfo
+from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_core.prompts import (
+    ChatPromptTemplate,
+    MessagesPlaceholder,
+    HumanMessagePromptTemplate,
+    AIMessagePromptTemplate)
+from langchain.agents import create_tool_calling_agent , AgentExecutor
+from langchain.prompts.few_shot import FewShotChatMessagePromptTemplate
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.runnables.history import RunnableWithMessageHistory
+from langchain_community.chat_message_histories import ChatMessageHistory
+import os
+from dotenv import load_dotenv
+from pydantic import BaseModel
+from datetime import datetime
+from agents.pg_tools import SEARCH_TOOLS
+import json
+
+load_dotenv()
+
+# timezone
+TZ = ZoneInfo("America/Sao_Paulo")
+today = datetime.now(TZ).date()
+
+# dicionário para armazenar o histórico de mensagens 
+store = {}
+def get_session_history (session_id) -> ChatMessageHistory:
+    # Função que retorna o histórico de uma sessão específica
+    if session_id not in store:
+        store[session_id] = ChatMessageHistory()
+    
+    return store[session_id]
+
+
+# Modelo Gemini via Langchain
+llm = ChatGoogleGenerativeAI(
+    model= "gemini-2.5-flash-lite"
+    , temperature= 0.0
+    , top_p = 1.0
+    , google_api_key = os.getenv("GEMINI_API_KEY")
+)
+
+# Lendo o arquivo search_agent.txt (onde tem o prompt)
+with open ("prompts/search_agent.txt", "r", encoding="utf-8") as file:
+    system_prompt = ("system", file.read())
+
+# Lendo o arquivo programs_shots.json (onde tem os few-shots)
+with open ("shots/search_shots.json", "r", encoding="utf-8") as file:
+    shots = json.load(file)
+
+example_prompt = ChatPromptTemplate.from_messages([
+    HumanMessagePromptTemplate.from_template("{human}"),
+    AIMessagePromptTemplate.from_template("{ai}")
+])
+
+fewshots = FewShotChatMessagePromptTemplate(
+    examples=shots,
+    example_prompt=example_prompt
+)
+
+prompt = ChatPromptTemplate.from_messages([
+    system_prompt,                          # system prompt
+    fewshots,                               # Shots human/ai 
+    MessagesPlaceholder("chat_history"),    # memória
+    ("human", "{input}"),
+    MessagesPlaceholder("agent_scratchpad")           
+])
+
+prompt = prompt.partial(today_local=today.isoformat())
+
+"""Placeholder normal = variavel que precisa ser passada toda vez .
+Partial =  pré configuração do template 
+"""
+
+agent = create_tool_calling_agent(llm, SEARCH_TOOLS, prompt)
+agent_executor = AgentExecutor(agent=agent, tools=SEARCH_TOOLS, verbose=False)
+
+
+chain = RunnableWithMessageHistory(
+    agent_executor,
+    get_session_history=get_session_history,
+    input_messages_key="input",
+    history_messages_key="chat_history"
+)
+
+def search_agent(user_input):
+    while True:
+        if user_input.lower() in ("sair", "end", "fim", "tchau", "bye"):
+            print("Tchau, qualquer dúvida, pode me chamar que eu estarei por aqui!")
+            break
+        try:
+            resposta = chain.invoke(
+                {"input": user_input},
+                config={"configurable": {"session_id": "PRECISA_MAS_NAO_IMPORTA"}} #aqui, entraia o id do usuario
+            )
+
+            output_text = resposta.get("output", "")
+            context = resposta.get("chat_history", [])
+
+            return output_text, context
+        except Exception as e:
+            print("erro ao consumir API: ", e)
+            return "", []
+
+# print(search_agent("Qual curso fala sobre a alimentação dos bois?"))
+
+
+# testes ---------------
+""" 
+Tem algum curso sobre bem-estar animal?
+Qual cursos vocês têm sobre normas para os animais?
+Qual curso fala sobre a alimentação dos bois?
+
+"""
