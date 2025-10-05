@@ -2,6 +2,10 @@ from flask import Flask, request, jsonify
 from programs_agent import programs_agent as run_programs_agent
 from search_agent import search_agent as run_search_agent
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
 
 app = Flask(__name__)
 
@@ -18,7 +22,8 @@ def programs_agent():
     data = request.get_json()
     prompt = data.get("prompt", "")
     response = programs_agent_response(prompt)
-    return {"agent": "programs_agent", "response": response}
+
+    return jsonify({"agent": "programs_agent", "response": str(response)})
 
 # Endpoint for Agent 2
 @app.route('/search_agent', methods=['POST'])
@@ -26,7 +31,8 @@ def search_agent():
     data = request.get_json()
     prompt = data.get("prompt", "")
     response = search_agent_response(prompt)
-    return {"agent": "search_agent", "response": response}
+
+    return jsonify({"agent": "search_agent", "response": str(response)})
 
 if __name__ == '__main__':
     # Get the port from the environment variable, default to 5000 if not set
