@@ -14,7 +14,8 @@ import os
 from dotenv import load_dotenv
 from pydantic import BaseModel
 from datetime import datetime
-from agents.pg_tools import PROGRAMS_TOOLS
+# from agents.pg_tools import PROGRAMS_TOOLS
+from pg_tools import PROGRAMS_TOOLS
 import json
 
 load_dotenv()
@@ -94,7 +95,7 @@ def programs_agent(user_input, session_id):
         try:
             resposta = chain.invoke(
                 {"input": user_input},
-                config={"configurable": {"session_id": session_id}} #aqui, entraia o id do usuario
+                config={"configurable": {"session_id": session_id}}
             )
 
             output_text = resposta.get("output", "")
@@ -105,14 +106,14 @@ def programs_agent(user_input, session_id):
             print("erro ao consumir API: ", e)
             return "", []
 
-# print(programs_agent("O que é a lei 7889/1989?", "sessão_teste_1"))
+print(programs_agent("Quanto o boi libera dee gás metano na vida dele?", "sessão_teste_1"))
 
 
 # Testes ------------------------
 """
 O que é a lei 7889/1989? (deve falar da lei)
 O que é a lei 9013/2017? (deve falar que é um decreto e depois falar o que é)
-O que é estresse pré-abate? (explica o que é e as causas)
+O que é manejo calmo? (explica o que é e as causas)
 Qual a lei que fala sobre inspeção sanitária e industrial? (fala das leis 9013/2017 e ciota sobre o decreto 7889/1989)
 
 

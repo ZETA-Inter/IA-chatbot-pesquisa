@@ -189,13 +189,13 @@ def get_topic(
         
         pipeline = [
             {
-                "$search": {
-                    "index": "idx_embedding_vector",
-                    "knnBeta": {
-                        "vector": query_vector,
-                        "path": "embedding_vector",
-                        "k": 10
-                    }
+                "$vectorSearch": {  # ✅ usa a sintaxe mais recente e estável
+                    "index": "idx_vector_embedding",
+                    "path": "embedding_vector",
+                    "queryVector": query_vector,
+                    "numCandidates": 100,   
+                    "limit": 5,             
+                    "similarity": "cosine"  
                 }
             },
             {
@@ -204,14 +204,16 @@ def get_topic(
                     "class_id": 1,
                     "source": 1,
                     "text": 1,
-                    "score": {"$meta": "searchScore"}
+                    "score": {"$meta": "vectorSearchScore"}
                 }
             },
-            {"$sort": {"score": -1}},
-            {"$limit": 5}
+            {"$sort": {"score": -1}}
         ]
 
+
+        
         results = list(class_embeddings.aggregate(pipeline))
+        print(results)
         
         if not results:
             return {"status": "error", "message": f"Nenhum conteúdo encontrado para '{topic}'."}
