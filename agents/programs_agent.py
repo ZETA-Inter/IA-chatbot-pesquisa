@@ -14,8 +14,7 @@ import os
 from dotenv import load_dotenv
 from pydantic import BaseModel
 from datetime import datetime
-# from agents.pg_tools import PROGRAMS_TOOLS
-from pg_tools import PROGRAMS_TOOLS
+from agents.pg_tools import PROGRAMS_TOOLS
 import json
 
 load_dotenv()
@@ -106,7 +105,7 @@ def programs_agent(user_input, session_id):
             print("erro ao consumir API: ", e)
             return "", []
 
-print(programs_agent("Quanto o boi libera dee gás metano na vida dele?", "sessão_teste_1"))
+# print(programs_agent("Quanto o boi libera dee gás metano na vida dele?", "sessão_teste_1"))
 
 
 # Testes ------------------------

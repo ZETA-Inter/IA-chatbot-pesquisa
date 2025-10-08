@@ -189,7 +189,7 @@ def get_topic(
         
         pipeline = [
             {
-                "$vectorSearch": {  # ✅ usa a sintaxe mais recente e estável
+                "$vectorSearch": {  
                     "index": "idx_vector_embedding",
                     "path": "embedding_vector",
                     "queryVector": query_vector,
@@ -210,10 +210,8 @@ def get_topic(
             {"$sort": {"score": -1}}
         ]
 
-
         
         results = list(class_embeddings.aggregate(pipeline))
-        print(results)
         
         if not results:
             return {"status": "error", "message": f"Nenhum conteúdo encontrado para '{topic}'."}
@@ -236,10 +234,6 @@ def get_topic(
     except Exception as e:
         return {"status": "error", "results": [], "message": f"Erro na busca utilizando RAG: {str(e)}"}
     
-
-
-
-
 
 # TOOLS DE SEARCH -------------------------------------------------------
 # Tool: SearchProgramsArgs
@@ -272,13 +266,14 @@ def search_programs(
             }}
         ]
 
-        mongo_results = list(classes.aggregate(pipeline))
+        results = list(classes.aggregate(pipeline))
+        print(results)
 
-        if not mongo_results:
+        if not results:
             return {"status": "error", "message": f"Nenhum conteúdo relevante encontrado para o tópico '{topic}'."}
 
         # Extrai os IDs dos programas dos resultados
-        program_ids = [res["program_id"] for res in mongo_results if res.get("program_id")]
+        program_ids = [res["program_id"] for res in results if res.get("program_id")]
         print(program_ids)
 
 
