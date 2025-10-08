@@ -14,7 +14,7 @@ import os
 from dotenv import load_dotenv
 from pydantic import BaseModel
 from datetime import datetime
-from agents.pg_tools import SEARCH_TOOLS
+from pg_tools import SEARCH_TOOLS
 import json
 
 load_dotenv()
@@ -103,7 +103,7 @@ def search_agent(user_input):
             print("erro ao consumir API: ", e)
             return "", []
 
-# print(search_agent("Qual curso fala sobre a alimentação dos bois?"))
+print(search_agent("Qual curso fala sobre a alimentação dos bois?"))
 
 
 # testes ---------------
