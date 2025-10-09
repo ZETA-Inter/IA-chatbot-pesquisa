@@ -9,7 +9,7 @@ session_id = str(uuid.uuid4())
 query = "Quais são as boas práticas no transporte de animais?"
 query2 = "O que é estresse pré-abate?"
 query3 = "O que é a lei 9013/2017?"
-query4 = "Qual curso fala sobre transporte de animais?"
+query4 = "Qual curso fala sobre abate de bovinos?"
 query5 = "Vocês são inuteis, burros!" # testa o guardrail para palavras ofensivas
 query6 = "Animais fazem sexo?" # testa o guardrail se palavras obscenas
 
@@ -21,7 +21,7 @@ query6 = "Animais fazem sexo?" # testa o guardrail se palavras obscenas
 
 
 # teste com o search
-response = run_search_pipeline(query6, str(uuid.uuid4()))
+response = run_search_pipeline(query4, str(uuid.uuid4()))
 
 print("\n=== RESPOSTA FINAL DO PIPELINE SEARCH ===")
 print(response)

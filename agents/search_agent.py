@@ -102,7 +102,7 @@ def search_agent(user_input, session_id):
             print("erro ao consumir API: ", e)
             return "", []
 
-print(search_agent("Quero saber como é feito o abate de bovinos", "123456"))
+# print(search_agent("Quero saber como é feito o abate de bovinos", "123456"))
 
 
 # testes ---------------
