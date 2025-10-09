@@ -74,8 +74,7 @@ Partial =  pré configuração do template
 """
 
 agent = create_tool_calling_agent(llm, SEARCH_TOOLS, prompt)
-agent_executor = AgentExecutor(agent=agent, tools=SEARCH_TOOLS, verbose=False)
-
+agent_executor = AgentExecutor(agent=agent, tools=SEARCH_TOOLS, verbose=True)
 
 chain = RunnableWithMessageHistory(
     agent_executor,
@@ -92,7 +91,7 @@ def search_agent(user_input):
         try:
             resposta = chain.invoke(
                 {"input": user_input},
-                config={"configurable": {"session_id": "PRECISA_MAS_NAO_IMPORTA"}} #aqui, entraia o id do usuario
+                config={"configurable": {"session_id": "PRECISA_MAS_NAO_IMPORTA"}}
             )
 
             output_text = resposta.get("output", "")
