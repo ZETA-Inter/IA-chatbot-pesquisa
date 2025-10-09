@@ -14,7 +14,7 @@ import os
 from dotenv import load_dotenv
 from pydantic import BaseModel
 from datetime import datetime
-from pg_tools import SEARCH_TOOLS
+from agents.pg_tools import SEARCH_TOOLS
 import json
 
 load_dotenv()
@@ -35,7 +35,7 @@ def get_session_history (session_id) -> ChatMessageHistory:
 
 # Modelo Gemini via Langchain
 llm = ChatGoogleGenerativeAI(
-    model= "gemini-2.5-flash-lite"
+    model= "gemini-2.5-flash"
     , temperature= 0.0
     , top_p = 1.0
     , google_api_key = os.getenv("GEMINI_API_KEY")
@@ -76,7 +76,6 @@ Partial =  pré configuração do template
 agent = create_tool_calling_agent(llm, SEARCH_TOOLS, prompt)
 agent_executor = AgentExecutor(agent=agent, tools=SEARCH_TOOLS, verbose=False)
 
-
 chain = RunnableWithMessageHistory(
     agent_executor,
     get_session_history=get_session_history,
@@ -84,7 +83,7 @@ chain = RunnableWithMessageHistory(
     history_messages_key="chat_history"
 )
 
-def search_agent(user_input):
+def search_agent(user_input, session_id):
     while True:
         if user_input.lower() in ("sair", "end", "fim", "tchau", "bye"):
             print("Tchau, qualquer dúvida, pode me chamar que eu estarei por aqui!")
@@ -92,7 +91,7 @@ def search_agent(user_input):
         try:
             resposta = chain.invoke(
                 {"input": user_input},
-                config={"configurable": {"session_id": "PRECISA_MAS_NAO_IMPORTA"}} #aqui, entraia o id do usuario
+                config={"configurable": {"session_id": session_id}}
             )
 
             output_text = resposta.get("output", "")
@@ -103,7 +102,7 @@ def search_agent(user_input):
             print("erro ao consumir API: ", e)
             return "", []
 
-print(search_agent("Qual curso fala sobre a alimentação dos bois?"))
+print(search_agent("Quero saber como é feito o abate de bovinos", "123456"))
 
 
 # testes ---------------

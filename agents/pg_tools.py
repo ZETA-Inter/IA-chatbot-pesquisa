@@ -267,14 +267,12 @@ def search_programs(
         ]
 
         results = list(classes.aggregate(pipeline))
-        print(results)
 
         if not results:
             return {"status": "error", "message": f"Nenhum conteúdo relevante encontrado para o tópico '{topic}'."}
 
         # Extrai os IDs dos programas dos resultados
         program_ids = [res["program_id"] for res in results if res.get("program_id")]
-        print(program_ids)
 
 
         if not program_ids:
@@ -296,11 +294,7 @@ def search_programs(
         return {
             "status": "ok",
             "query": topic,
-            "programs": programs,
-            "matched_classes": [
-                {"title": res.get("title")}
-                for res in mongo_results
-            ]
+            "programs": programs
         }
     except Exception as e:
         return {"status": "error", "message": f"Erro na busca utilizando embedding no MongoDB: {str(e)}"}
