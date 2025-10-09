@@ -50,7 +50,6 @@ def insert_embeddings():
                 "source": "description", # Fonte para identificar o dado na busca
                 "text": chunk
             })
-       
 
         # gerar embeddings e atualizar no Mongo
         for doc in docs_to_embed:
@@ -60,12 +59,6 @@ def insert_embeddings():
 
             # salva em uma nova collection (ex: db["class_embeddings"])
             db["class_embeddings"].insert_one(doc)
-
-            # 🔹 ou salva direto na mesma collection
-            # classes.update_one(
-            #     {"_id": class_id},
-            #     {"$push": {"embedded_texts": doc}}
-            # )
 
 insert_embeddings()
 print("Embeddings gerados e armazenados!")

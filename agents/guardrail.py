@@ -11,7 +11,7 @@ from langchain_core.prompts import (
     AIMessagePromptTemplate
 )
 from langchain.prompts.few_shot import FewShotChatMessagePromptTemplate
-from agents.agents_memory import get_memory
+from agents.memory_agent import get_memory
 
 
 load_dotenv()
