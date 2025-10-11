@@ -104,16 +104,3 @@ def programs_agent(user_input, session_id):
         except Exception as e:
             print("erro ao consumir API: ", e)
             return "", []
-
-# print(programs_agent("Quanto o boi libera dee gás metano na vida dele?", "sessão_teste_1"))
-
-
-# Testes ------------------------
-"""
-O que é a lei 7889/1989? (deve falar da lei)
-O que é a lei 9013/2017? (deve falar que é um decreto e depois falar o que é)
-O que é manejo calmo? (explica o que é e as causas)
-Qual a lei que fala sobre inspeção sanitária e industrial? (fala das leis 9013/2017 e ciota sobre o decreto 7889/1989)
-
-
-"""
