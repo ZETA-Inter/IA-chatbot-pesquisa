@@ -95,20 +95,8 @@ def search_agent(user_input, session_id):
             )
 
             output_text = resposta.get("output", "")
-            context = resposta.get("chat_history", [])
 
-            return output_text, context
+            return output_text, #context
         except Exception as e:
             print("erro ao consumir API: ", e)
             return "", []
-
-# print(search_agent("Quero saber como é feito o abate de bovinos", "123456"))
-
-
-# testes ---------------
-""" 
-Tem algum curso sobre bem-estar animal?
-Qual cursos vocês têm sobre normas para os animais?
-Qual curso fala sobre a alimentação dos bois?
-
-"""
