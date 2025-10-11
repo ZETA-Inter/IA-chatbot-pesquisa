@@ -1,3 +1,4 @@
+# Importações
 from zoneinfo import ZoneInfo
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.prompts import (
@@ -7,16 +8,15 @@ from langchain_core.prompts import (
     AIMessagePromptTemplate)
 from langchain.agents import create_tool_calling_agent , AgentExecutor
 from langchain.prompts.few_shot import FewShotChatMessagePromptTemplate
-from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_community.chat_message_histories import ChatMessageHistory
 import os
 from dotenv import load_dotenv
-from pydantic import BaseModel
 from datetime import datetime
 from agents.pg_tools import PROGRAMS_TOOLS
 import json
 
+# Carrega as envs
 load_dotenv()
 
 # timezone
@@ -32,8 +32,7 @@ def get_session_history (session_id) -> ChatMessageHistory:
     
     return store[session_id]
 
-
-# Modelo Gemini via Langchain
+# Modelo Gemini 2.5 flash
 llm = ChatGoogleGenerativeAI(
     model= "gemini-2.5-flash"
     , temperature= 0.0
@@ -49,12 +48,10 @@ with open ("prompts/programs_agent.txt", "r", encoding="utf-8") as file:
 with open ("shots/programs_shots.json", "r", encoding="utf-8") as file:
     shots = json.load(file)
 
-
 example_prompt = ChatPromptTemplate.from_messages([
     HumanMessagePromptTemplate.from_template("{human}"),
     AIMessagePromptTemplate.from_template("{ai}")
 ])
-
 
 fewshots = FewShotChatMessagePromptTemplate(
     examples=shots,
@@ -62,9 +59,9 @@ fewshots = FewShotChatMessagePromptTemplate(
 )
 
 prompt = ChatPromptTemplate.from_messages([
-    system_prompt,                          # system prompt
-    fewshots,                               # Shots human/ai 
-    MessagesPlaceholder("chat_history"),    # memória
+    system_prompt,                          
+    fewshots,                                
+    MessagesPlaceholder("chat_history"),   
     ("human", "{input}"),
     MessagesPlaceholder("agent_scratchpad")           
 ])
@@ -86,6 +83,7 @@ chain = RunnableWithMessageHistory(
     history_messages_key="chat_history"
 )
 
+# Função principal
 def programs_agent(user_input, session_id):
     while True:
         if user_input.lower() in ("sair", "end", "fim", "tchau", "bye"):
