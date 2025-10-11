@@ -1,10 +1,10 @@
+# Importações
 import uuid
 import os
 from dotenv import load_dotenv
 from langchain_mongodb import MongoDBChatMessageHistory
 from agents.search_agent import search_agent
 from agents.guardrail import guardrail_agent
-from agents.judge import judge_agent
 
 # Carrega as envs
 load_dotenv()

@@ -1,6 +1,6 @@
+# Importações
 import os
 import json
-from typing import Union
 from dotenv import load_dotenv
 from pydantic import BaseModel, Field
 from langchain_openai import ChatOpenAI
@@ -13,9 +13,10 @@ from langchain_core.prompts import (
 from langchain.prompts.few_shot import FewShotChatMessagePromptTemplate
 from agents.memory_agent import get_memory
 
+# Carrega as envs
 load_dotenv()
 
-# BaseModel do juiz
+# BaseModel
 class Judge(BaseModel):
     evaluation: str = Field(
         description='Avaliação final do juiz: "Boa", "Aceitável" ou "Ruim"'
@@ -27,15 +28,14 @@ model = ChatOpenAI(
     api_key=os.getenv("OPENAI_API_KEY")
 ).with_structured_output(Judge)
 
-# Lendo o prompt do juiz
+# Lendo o arquivo judge.txt (onde tem o prompt)
 with open("prompts/judge.txt", "r", encoding="utf-8") as x:
     system_text = x.read()
 system_prompt = ("system", system_text)
 
-# Lendo os fewshots do juiz
+# Lendo o arquivo judge_shots.json (onde tem os few-shots)
 with open("shots/judge_shots.json", "r", encoding="utf-8") as x:
     shots = json.load(x)
-
 
 example_prompt = ChatPromptTemplate.from_messages([
     HumanMessagePromptTemplate.from_template("{human}"),
@@ -59,7 +59,6 @@ judge_prompt = ChatPromptTemplate.from_messages([
 # Pipeline
 pipeline = judge_prompt | model 
 
-
 # Função para rodar o juiz
 def judge_agent(query, rag_output, context, session_id):
     """
@@ -77,6 +76,7 @@ def judge_agent(query, rag_output, context, session_id):
             "context": context,
             "memory": memory.messages
         })
+        
         # Retorna avaliação final
         return (True, output.evaluation)
 

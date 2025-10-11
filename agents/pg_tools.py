@@ -1,3 +1,4 @@
+# Importações
 import os
 from dotenv import load_dotenv
 import psycopg2
@@ -9,9 +10,6 @@ from zoneinfo import ZoneInfo
 from pymongo import MongoClient
 import psycopg2
 from sentence_transformers import SentenceTransformer
-from sklearn.metrics.pairwise import cosine_similarity
-import re
-import numpy as np
 
 # Carrega as envs
 load_dotenv()
@@ -21,8 +19,6 @@ MONGODB_URL = os.getenv("MONGODB_URL")
 client = MongoClient(MONGODB_URL)
 db = client["Zeta"]
 classes = db["classes"]
-activities = db["activities"]
-counter = db["counter"]
 class_embeddings = db["class_embeddings"]
 
 # Conexão com o postgres
@@ -34,11 +30,6 @@ cur = conn.cursor()
 EMBEDDING_MODEL_NAME = "all-MiniLM-L6-v2"
 EMBEDDING_MODEL = SentenceTransformer(EMBEDDING_MODEL_NAME)
 
-# ìndices
-IDX_EMBEDDING_VECTOR = os.getenv("IDX_EMBEDDING_VECTOR", "idx_embedding_vector")
-idx_classes_search = os.getenv("idx_classes_search", "idx_classes_search")
-
-
 # Classes das tools de programs
 class GetLawArgs(BaseModel):
     law_number: str = Field(..., description="Número da lei (ex: 'Portaria MAPA nº 1234/2020', '9888/2019').")
@@ -49,7 +40,6 @@ class GetTopicArgs(BaseModel):
     
 class GetTopicByLawArgs(BaseModel):
     topic: str =Field(..., description="Tópico ou palavra-chave a buscar no campo 'law.description'.")
-
 
 # Classes das tools de search
 class SearchProgramsArgs(BaseModel):
@@ -69,7 +59,7 @@ def get_law(
     Se um tópico for fornecido, retorna informações relacionadas a esse tópico dentro da lei.
     """
     try:
-
+        # Query do MongoDB: utilizando o índice em classes, procura em laws.number o número da lei, decreto ou instrução normativa
         pipeline = [
             {
                 "$search": {
@@ -84,34 +74,31 @@ def get_law(
             {"$project": {"laws": 1, "_id": 0}}
         ]
 
+        # Transforma o resultado em uma lista
         results = list(classes.aggregate(pipeline))
 
+        # Caso esteja vazio o retorno
         if not results:
             return {
                 "status": "error",
                 "message": f"Nenhuma lei encontrada com o número '{law_number}'."
             }
         
+        # Pega o primeiro documento
         laws_obj = results[0].get("laws", [])
         matched_laws = []
 
-
+        # Adiciona a descrição da lei ao matched_laws
         for law in laws_obj:
-            number = law.get("number")
             description = law.get("description", "")
 
             if topic:
-                if topic.lower() in description.lower():
+                if topic.lower() in description.lower(): 
                     matched_laws.append(law)
             else:
                 matched_laws.append(law)
 
-        if not matched_laws:
-            return {
-                "status": "error",
-                "message": f"A lei '{law_number}' foi encontrada, mas o tópico '{topic}' não aparece em sua descrição."
-            }
-
+        # Retorna a descrição da lei procurada
         return {
             "status": "ok",
             "results": matched_laws
@@ -131,6 +118,7 @@ def get_topic_by_law(
     no banco de dados MongoDB, e retorna o número e a descrição da lei no banco de dados MongoDB.
     """
     try:
+        # Query do MongoDB: utilizando o índice de classes, procura um tópico dentro de laws.description para retornar o nº da lei, decreto ou instrução normativa
         pipeline = [
             {
                 "$search": {
@@ -145,20 +133,24 @@ def get_topic_by_law(
             {"$project": {"laws": 1, "_id": 0}}
         ]
 
+        # Transforma o resultado em uma lista
         results = list(classes.aggregate(pipeline))
 
+        # Caso esteja vazio o retorno
         if not results:
             return {
                 "status": "error",
                 "message": f"Nenhum resultado encontrado para o tópico '{topic}'."
             }
         
+        # Caso tenha conteúdo, adiciona as leis ao laws_obj
         laws_obj = []
         for doc in results:
             for law in doc.get("laws", []):
                 if law not in laws_obj:
                     laws_obj.append(law)
 
+        # Retorna as leis e o tópico procurado
         return {
             "status": "ok",
             "topic": topic,
@@ -177,6 +169,8 @@ def get_topic(
     Busca um tópico ou palavra-chave no banco de dados MongoDB usando a busca vetorial (RAG) para 
     encontrar o conteúdo semanticamente mais relevante nas classes do curso.
     """
+
+    # Verifica se o modelo de embedding existe
     if EMBEDDING_MODEL is None:
         return {"status": "error", "results": [], "message": "Modelo de embedding indisponível. Não é possível fazer a busca RAG."}
         
@@ -187,6 +181,8 @@ def get_topic(
         # Recupera todos os documentos com embeddings
         docs = class_embeddings.find({}, {"class_id": 1, "title": 1, "source": 1, "embedding_vector": 1})
         
+        # Query do MongoDB: utilizando o índice do Atlas Search Vector na collection class_embeddings, ele pega a o embedding do input do usuário e faz a comparação com os documentos com embedding
+        # Ele faz a similaridade dos cossenos e depois escolhe os 5 mais próximos para retornar
         pipeline = [
             {
                 "$vectorSearch": {  
@@ -210,12 +206,14 @@ def get_topic(
             {"$sort": {"score": -1}}
         ]
 
-        
+        # Transforma o retorno em lista
         results = list(class_embeddings.aggregate(pipeline))
         
+        # Caso esteja vazio o retorno
         if not results:
             return {"status": "error", "message": f"Nenhum conteúdo encontrado para '{topic}'."}
 
+        # Caso não, ele itera o resultado e adiciona em formatted_results, como tudo formatado com o texto, o campo procurado e o score
         formatted_results = []
         for r in results:
             formatted_results.append({
@@ -224,6 +222,7 @@ def get_topic(
                 "relevance_score": round(r.get("score", 0), 2)
             })
 
+        # Retorna o tópico do input e a resposta formatada
         return {
             "status": "ok",
             "topic": topic,
@@ -247,8 +246,11 @@ def search_programs(
     """
     
     try:
+        # Separa o input do usuário
         query = topic.strip()
 
+        # Query do MongoDB: utilizando o índice em classes, procura a query e retorna o título, o conteúdo e as descrições (tanto da aula quanto da lei)
+        # Depois, é retornado o número do curso
         pipeline = [
             {
                 "$search": {
@@ -266,22 +268,25 @@ def search_programs(
             }}
         ]
 
+        # Transforma o resultado em lista
         results = list(classes.aggregate(pipeline))
 
+        # Caso esteja vazio o retorno
         if not results:
             return {"status": "error", "message": f"Nenhum conteúdo relevante encontrado para o tópico '{topic}'."}
 
-        # Extrai os IDs dos programas dos resultados
+        # Caso não, extrai os IDs dos programas dos resultados
         program_ids = [res["program_id"] for res in results if res.get("program_id")]
 
 
         if not program_ids:
             return {"status": "error", "message": f"Nenhum ID de programa encontrado nos resultados para o tópico '{topic}'."}
 
-        # Consulta o postgres para buscar o nome do curso
+        # Monta uma query com os ids extraídos de program_ids
         ids = ', '.join(['%s'] * len(program_ids))
         sql_query = f"SELECT name FROM programs WHERE id IN ({ids})"
         
+        # Executa a query montada
         cur.execute(sql_query, tuple(program_ids))
         results = cur.fetchall()
 
@@ -291,16 +296,15 @@ def search_programs(
         # Extrai os nomes dos cursos da tupla de resultados
         programs = [program[0] for program in results]
 
+        # Retorna o tópico e o nome dos cursos correspondentes
         return {
             "status": "ok",
             "query": topic,
             "programs": programs
         }
+    
     except Exception as e:
         return {"status": "error", "message": f"Erro na busca utilizando embedding no MongoDB: {str(e)}"}
-
-
-
 
 # Exporta a lista de tools
 PROGRAMS_TOOLS = [get_law, get_topic, get_topic_by_law]

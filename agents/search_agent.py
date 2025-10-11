@@ -1,3 +1,4 @@
+# Importações
 from zoneinfo import ZoneInfo
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.prompts import (
@@ -7,12 +8,10 @@ from langchain_core.prompts import (
     AIMessagePromptTemplate)
 from langchain.agents import create_tool_calling_agent , AgentExecutor
 from langchain.prompts.few_shot import FewShotChatMessagePromptTemplate
-from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_community.chat_message_histories import ChatMessageHistory
 import os
 from dotenv import load_dotenv
-from pydantic import BaseModel
 from datetime import datetime
 from agents.pg_tools import SEARCH_TOOLS
 import json
@@ -33,7 +32,7 @@ def get_session_history (session_id) -> ChatMessageHistory:
     return store[session_id]
 
 
-# Modelo Gemini via Langchain
+# Modelo Gemini 2.5 flash
 llm = ChatGoogleGenerativeAI(
     model= "gemini-2.5-flash"
     , temperature= 0.0
@@ -60,9 +59,9 @@ fewshots = FewShotChatMessagePromptTemplate(
 )
 
 prompt = ChatPromptTemplate.from_messages([
-    system_prompt,                          # system prompt
-    fewshots,                               # Shots human/ai 
-    MessagesPlaceholder("chat_history"),    # memória
+    system_prompt,                          
+    fewshots,                                
+    MessagesPlaceholder("chat_history"),    
     ("human", "{input}"),
     MessagesPlaceholder("agent_scratchpad")           
 ])
@@ -83,6 +82,7 @@ chain = RunnableWithMessageHistory(
     history_messages_key="chat_history"
 )
 
+# Função principal
 def search_agent(user_input, session_id):
     while True:
         if user_input.lower() in ("sair", "end", "fim", "tchau", "bye"):
