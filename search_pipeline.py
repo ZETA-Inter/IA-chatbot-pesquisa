@@ -33,4 +33,4 @@ def run_search(user_input, session_id):
     search_output = search_agent(user_input, session_id)
     chat_history.add_ai_message(search_output)
 
-    return search_output
+    return search_output[0]

@@ -28,5 +28,5 @@ user_input = {
 # print(f"Resposta do Sindi (programs_agent):\n{programs_answer}")
 
 # Chamando o search_agent
-search_answer = run_search(user_input["search3"], session_id)
+search_answer = run_search(user_input["search1"], session_id)
 print(f"Resposta do Canchim:\n{search_answer}")
