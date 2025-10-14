@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
-from programs_agent import programs_agent as run_programs_agent
-from search_agent import search_agent as run_search_agent
+from programs_pipeline import run_programs as run_programs_agent
+from search_pipeline import run_search as run_search_agent
 import os
 from dotenv import load_dotenv
 
@@ -9,33 +9,42 @@ load_dotenv()
 
 app = Flask(__name__)
 
-# Example agent functions (replace with your actual logic)
-def programs_agent_response(prompt: str) -> str:
-    return run_programs_agent(prompt)
 
-def search_agent_response(prompt: str) -> str:
-    return run_search_agent(prompt)
+def programs_agent_response(prompt: str, session_id: str = None) -> str:
+    return run_programs_agent(prompt, session_id)
 
-# Endpoint for Agent 1
+
+def search_agent_response(prompt: str, session_id: str = None) -> str:
+    return run_search_agent(prompt, session_id)
+
+
 @app.route('/programs_agent', methods=['POST'])
 def programs_agent():
     data = request.get_json()
     prompt = data.get("prompt", "")
-    response = programs_agent_response(prompt)
+    session_id = data.get("session", "")
+    if not session_id:
+        response = programs_agent_response(prompt=prompt)
+    else:
+        response = programs_agent_response(
+            prompt=prompt, session_id=session_id)
 
     return jsonify({"agent": "programs_agent", "response": str(response)})
 
-# Endpoint for Agent 2
+
 @app.route('/search_agent', methods=['POST'])
 def search_agent():
     data = request.get_json()
     prompt = data.get("prompt", "")
-    response = search_agent_response(prompt)
+    session_id = data.get("session", "")
+    if not session_id:
+        response = search_agent_response(prompt=prompt)
+    else:
+        response = search_agent_response(prompt=prompt, session_id=session_id)
 
     return jsonify({"agent": "search_agent", "response": str(response)})
 
+
 if __name__ == '__main__':
-    # Get the port from the environment variable, default to 5000 if not set
     port = int(os.environ.get("PORT", 5000))
-    # Run the app, binding to all public interfaces and using the specified port
     app.run(host="0.0.0.0", port=port)
