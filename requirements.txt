@@ -8,3 +8,5 @@ langchain-core
 langchain-google-genai
 pydantic
 langchain-mongodb
+sentence-transformers
+langchain-openai
