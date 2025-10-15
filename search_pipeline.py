@@ -27,10 +27,10 @@ def run_search(user_input, session_id):
     guardrail_valid, guardrail_message = guardrail_agent(user_input, session_id)
     if not guardrail_valid:
         chat_history.add_ai_message(guardrail_message)
-        return guardrail_message
+        return guardrail_message, session_id
     
     # 2 - Chama o agente search_agent
     search_output = search_agent(user_input, session_id)
     chat_history.add_ai_message(search_output)
 
-    return search_output
+    return search_output, session_id

@@ -28,7 +28,7 @@ def run_programs(user_input, session_id):
     guardrail_valid, guardrail_message = guardrail_agent(user_input, session_id)
     if not guardrail_valid:
         chat_history.add_ai_message(guardrail_message)
-        return guardrail_message
+        return guardrail_message, session_id
     
     # 2 - Chama o agente programs_agent
     programs_output, programs_context = programs_agent(user_input, session_id)
@@ -37,7 +37,7 @@ def run_programs(user_input, session_id):
     judge_valid, judge_evaluation = judge_agent(user_input, programs_output, programs_context, session_id)
     if judge_valid:
         chat_history.add_ai_message(programs_output)
-        return programs_output
+        return programs_output, session_id
     else:
         chat_history.add_ai_message(judge_evaluation)
-        return judge_evaluation
+        return judge_evaluation, session_id
