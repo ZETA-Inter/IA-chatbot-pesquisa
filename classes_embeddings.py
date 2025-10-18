@@ -27,12 +27,15 @@ def insert_embeddings():
 
         docs_to_embed = []
 
-        # Embedding: content.text
-        for item in c.get("content", []):
-            if "text" in item and item["text"]:
-                chunks = splitter.split_text(item["text"])
+        # Embedding: content
+        for text in c.get("content", []):
+            if text:
+                chunks = splitter.split_text(text)
                 for chunk in chunks:
-                    docs_to_embed.append({"source": "content", "text": chunk})
+                    docs_to_embed.append({
+                        "source": "content",
+                        "text": chunk
+                    })
 
         # Embedding: laws.description
         for law in c.get("laws", []):
