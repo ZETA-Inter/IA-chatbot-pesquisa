@@ -96,7 +96,8 @@ def search_agent(user_input, session_id):
 
             output_text = resposta.get("output", "")
 
-            return output_text, #context
+            return output_text #context
         except Exception as e:
             print("erro ao consumir API: ", e)
             return "", []
+

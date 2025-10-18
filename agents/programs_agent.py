@@ -102,3 +102,4 @@ def programs_agent(user_input, session_id):
         except Exception as e:
             print("erro ao consumir API: ", e)
             return "", []
+        
