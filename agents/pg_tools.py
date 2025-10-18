@@ -257,7 +257,7 @@ def search_programs(
                     "index": "idx_classes_search",  # índice de search criado no MongoDB Atlas
                     "text": {
                         "query": query,
-                        "path": ["title", "content.text", "laws.description", "description"]
+                        "path": ["title", "content", "laws.description", "description"]
                     }
                 }
             },
@@ -277,7 +277,6 @@ def search_programs(
 
         # Caso não, extrai os IDs dos programas dos resultados
         program_ids = [res["program_id"] for res in results if res.get("program_id")]
-
 
         if not program_ids:
             return {"status": "error", "message": f"Nenhum ID de programa encontrado nos resultados para o tópico '{topic}'."}
