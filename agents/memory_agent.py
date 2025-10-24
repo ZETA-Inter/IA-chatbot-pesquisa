@@ -21,5 +21,5 @@ def get_memory(session_id):
         session_id=session_id,
         connection_string=MONGODB_URL,
         database_name="Zeta",
-        collection_name="conversations_log",
+        collection_name="message_store",
     )
