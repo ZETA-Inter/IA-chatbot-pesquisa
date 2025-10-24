@@ -14,6 +14,7 @@ import os
 from dotenv import load_dotenv
 from datetime import datetime
 from agents.pg_tools import PROGRAMS_TOOLS
+from agents.memory_agent import get_memory
 import json
 
 # Carrega as envs
@@ -22,15 +23,6 @@ load_dotenv()
 # timezone
 TZ = ZoneInfo("America/Sao_Paulo")
 today = datetime.now(TZ).date()
-
-# dicionário para armazenar o histórico de mensagens 
-store = {}
-def get_session_history (session_id) -> ChatMessageHistory:
-    # Função que retorna o histórico de uma sessão específica
-    if session_id not in store:
-        store[session_id] = ChatMessageHistory()
-    
-    return store[session_id]
 
 # Modelo Gemini 2.5 flash
 llm = ChatGoogleGenerativeAI(
@@ -68,35 +60,23 @@ prompt = ChatPromptTemplate.from_messages([
 
 prompt = prompt.partial(today_local=today.isoformat())
 
-"""Placeholder normal = variavel que precisa ser passada toda vez .
-Partial =  pré configuração do template 
-"""
-
 agent = create_tool_calling_agent(llm, PROGRAMS_TOOLS, prompt)
 agent_executor = AgentExecutor(agent=agent, tools=PROGRAMS_TOOLS, verbose=False)
-
-
-chain = RunnableWithMessageHistory(
-    agent_executor,
-    get_session_history=get_session_history,
-    input_messages_key="input",
-    history_messages_key="chat_history"
-)
 
 # Função principal
 def programs_agent(user_input, session_id):
     while True:
-        if user_input.lower() in ("sair", "end", "fim", "tchau", "bye"):
-            print("Tchau, qualquer dúvida, pode me chamar que eu estarei por aqui!")
-            break
+        memory = get_memory(session_id)
         try:
-            resposta = chain.invoke(
-                {"input": user_input},
-                config={"configurable": {"session_id": session_id}}
+            resposta = agent_executor.invoke(
+                {
+                    "input": user_input,
+                    "chat_history": memory.messages
+                }
             )
 
             output_text = resposta.get("output", "")
-            context = resposta.get("chat_history", [])
+            context = memory.messages
 
             return output_text, context
         except Exception as e:
