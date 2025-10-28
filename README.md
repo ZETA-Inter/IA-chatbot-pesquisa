@@ -5,8 +5,8 @@ ZETA é um aplicativo desenvolvido para auxiliar produtores rurais na criação 
 
 Este repositório há os dois chatbots utilizados no aplicativo:
 
-- **Sindi:**utilizado para tirar dúvidas sobre o conteúdo do curso, como aulas, lei e normas técnicas abordadas em cada aula, além do próprio conteúdo da aula;
-* **Canchim:**utilizado para retornar os cursos que estão disponíveis a partir do assunto que o usuário forneceu como parâmetro.
+- Sindi:utilizado para tirar dúvidas sobre o conteúdo do curso, como aulas, lei e normas técnicas abordadas em cada aula, além do próprio conteúdo da aula;
+- Canchim:utilizado para retornar os cursos que estão disponíveis a partir do assunto que o usuário forneceu como parâmetro.
 
 ## Linguagens utilizadas
 Para o desenvolvimento dos agentes foi utilizada a linguagem Python.
