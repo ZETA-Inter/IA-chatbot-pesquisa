@@ -22,7 +22,7 @@ Para o desenvolvimento do agentes principais utilizamos o modelo *Gemini 2.5 Fla
 ## Configuração Inicial
 1. Clone o repositório:
 ```bash
-git clone https://github.com/Viajou/DS1.git
+git clone https://github.com/ZETA-Inter/IA-chatbot-pesquisa.git
 ```
 2. Abra o projeto na IDE de sua preferência;
 3. Abra o terminal e instale as dependências do projeto:
