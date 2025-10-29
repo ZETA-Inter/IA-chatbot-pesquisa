@@ -9,7 +9,7 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 from pymongo import MongoClient
 import psycopg2
-from sentence_transformers import SentenceTransformer
+import google.generativeai as genai
 
 # Carrega as envs
 load_dotenv()
@@ -26,9 +26,9 @@ POSTGRES_URL = os.getenv("POSTGRES_URL")
 conn = psycopg2.connect(POSTGRES_URL)
 cur = conn.cursor()
 
-# Embedding
-EMBEDDING_MODEL_NAME = "all-MiniLM-L6-v2"
-EMBEDDING_MODEL = SentenceTransformer(EMBEDDING_MODEL_NAME)
+# Configuração do Gemini embedding
+genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+
 
 # Classes das tools de programs
 class GetLawArgs(BaseModel):
@@ -169,14 +169,14 @@ def get_topic(
     Busca um tópico ou palavra-chave no banco de dados MongoDB usando a busca vetorial (RAG) para 
     encontrar o conteúdo semanticamente mais relevante nas classes do curso.
     """
-
-    # Verifica se o modelo de embedding existe
-    if EMBEDDING_MODEL is None:
-        return {"status": "error", "results": [], "message": "Modelo de embedding indisponível. Não é possível fazer a busca RAG."}
-        
     try:
         # Gera o embedding da Pergunta do Usuário
-        query_vector = EMBEDDING_MODEL.encode(topic).tolist()
+        result = genai.embed_content(
+            model="text-embedding-004",
+            content=topic,
+            task_type="retrieval_query"
+        )
+        query_vector = result['embedding']
 
         # Recupera todos os documentos com embeddings
         docs = class_embeddings.find({}, {"class_id": 1, "title": 1, "source": 1, "embedding_vector": 1})
