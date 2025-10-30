@@ -1,6 +1,6 @@
 # Importações
 from pymongo import MongoClient
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_text_splitters.character import RecursiveCharacterTextSplitter
 import os
 from dotenv import load_dotenv
 import google.generativeai as genai
