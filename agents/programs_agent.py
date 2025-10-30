@@ -7,9 +7,8 @@ from langchain_core.prompts import (
     HumanMessagePromptTemplate,
     AIMessagePromptTemplate)
 from langchain.agents import create_tool_calling_agent , AgentExecutor
-from langchain.prompts.few_shot import FewShotChatMessagePromptTemplate
+from langchain_core.prompts.few_shot import FewShotChatMessagePromptTemplate
 from langchain_core.runnables.history import RunnableWithMessageHistory
-from langchain_community.chat_message_histories import ChatMessageHistory
 import os
 from dotenv import load_dotenv
 from datetime import datetime
