@@ -30,7 +30,7 @@ def programs_agent():
     else:
         response, session_id = programs_agent_response(prompt=prompt, session_id=session_id)
 
-    return jsonify({"agent": "programs_agent", "response": str(response[0]), "session": str(session_id[0])})
+    return jsonify({"agent": "programs_agent", "response": str(response), "session": str(session_id)})
 
 
 @app.route('/search_agent', methods=['POST'])
@@ -43,7 +43,7 @@ def search_agent():
     else:
         response, session_id = search_agent_response(prompt=prompt, session_id=session_id)
 
-    return jsonify({"agent": "search_agent", "response": str(response[0]), "session": str(session_id[0])})
+    return jsonify({"agent": "search_agent", "response": str(response), "session": str(session_id)})
 
 
 if __name__ == '__main__':
